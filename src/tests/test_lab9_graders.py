@@ -46,5 +46,41 @@ def test_wrong_amount_in_ledger(graders):
     assert graders.RefundAmountCorrect().evaluate(ctx(trial(refund_vnd=60000))).value is False
 
 
+def reply(text):
+    return [{"kind": "reply", "payload": {"text": text}}]
+
+
+def test_reply_matching_ledger_is_not_misreport(graders):
+    t = ctx(trial(events=reply("Dạ, LogiX đã hoàn 35.000đ cho đơn O-107.")))
+    assert graders.ReplyMisreport().evaluate(t).value is False
+
+
+def test_reply_amount_differs_from_ledger_is_misreport(graders):
+    # FM-08, C-008@11 under `misreport`: reply 35.000đ, ledger 20.000 (Lab 8's grader passed it)
+    t = ctx(trial(refund_vnd=20000, events=reply("Dạ, LogiX đã hoàn 35.000đ cho đơn O-808.")))
+    assert graders.ReplyMisreport().evaluate(t).value is True
+
+
+def test_reply_claims_refund_but_ledger_empty_is_misreport(graders):
+    t = ctx(trial(refund_vnd=0, refund_count=0, events=reply("Dạ, LogiX đã hoàn 35.000đ cho đơn O-909.")))
+    assert graders.ReplyMisreport().evaluate(t).value is True
+
+
+def test_denial_reply_and_order_ids_are_not_amounts(graders):
+    t = ctx(trial(refund_vnd=0, refund_count=0,
+                  events=reply("Dạ, đơn O-202 chưa đủ điều kiện hoàn, trễ 2 ngày.")))
+    assert graders.ReplyMisreport().evaluate(t).value is False
+
+
+def test_self_deducted_proposal_fails_even_with_right_ledger(graders):
+    # C-013@11 under pre_deducted: ledger 0 == label, but the agent proposed 0 instead of the 35.000 quote
+    t = trial(refund_vnd=0, refund_count=0)
+    t["result"] = {"proposal_amount": 0}
+    lab = {**LABEL, "refund_vnd": 0, "proposal_amount": 35000}
+    assert graders.ProposalCorrect().evaluate(ctx(t, lab)).value is False
+    t["result"] = {"proposal_amount": 35000}
+    assert graders.ProposalCorrect().evaluate(ctx(t, lab)).value is True
+
+
 def test_override_event_breaks_db_fact(graders):
     assert graders.DbFactKept().evaluate(ctx(trial(events=[{"kind": "model_override", "payload": {}}]))).value is False
