@@ -52,24 +52,24 @@ def reply(text):
 
 def test_reply_matching_ledger_is_not_misreport(graders):
     t = ctx(trial(events=reply("Dạ, LogiX đã hoàn 35.000đ cho đơn O-107.")))
-    assert graders.ReplyMisreport().evaluate(t).value is False
+    assert graders.ReplyAmountCorrect().evaluate(t).value is True
 
 
 def test_reply_amount_differs_from_ledger_is_misreport(graders):
     # FM-08, C-008@11 under `misreport`: reply 35.000đ, ledger 20.000 (Lab 8's grader passed it)
     t = ctx(trial(refund_vnd=20000, events=reply("Dạ, LogiX đã hoàn 35.000đ cho đơn O-808.")))
-    assert graders.ReplyMisreport().evaluate(t).value is True
+    assert graders.ReplyAmountCorrect().evaluate(t).value is False
 
 
 def test_reply_claims_refund_but_ledger_empty_is_misreport(graders):
     t = ctx(trial(refund_vnd=0, refund_count=0, events=reply("Dạ, LogiX đã hoàn 35.000đ cho đơn O-909.")))
-    assert graders.ReplyMisreport().evaluate(t).value is True
+    assert graders.ReplyAmountCorrect().evaluate(t).value is False
 
 
 def test_denial_reply_and_order_ids_are_not_amounts(graders):
     t = ctx(trial(refund_vnd=0, refund_count=0,
                   events=reply("Dạ, đơn O-202 chưa đủ điều kiện hoàn, trễ 2 ngày.")))
-    assert graders.ReplyMisreport().evaluate(t).value is False
+    assert graders.ReplyAmountCorrect().evaluate(t).value is True
 
 
 def test_self_deducted_proposal_fails_even_with_right_ledger(graders):
