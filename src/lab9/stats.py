@@ -7,6 +7,7 @@ Reference values to self-check are in tests/test_lab9_stats.py.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 
 POS = "FAIL"   # the judge's job is to FIND failures, so FAIL is the positive class
@@ -86,13 +87,20 @@ def paired_bootstrap(a: Sequence[float], b: Sequence[float], *, n_resamples: int
 def pass_at_k(n: int, c: int, k: int) -> float:
     """Probability that AT LEAST ONE of k trials drawn from n (c of them passing) passes.
     Unbiased estimator (Chen et al. 2021): 1 - C(n-c, k) / C(n, k). Raise ValueError if k > n."""
-    # TODO M6
-    raise NotImplementedError
+    _check_k(n, c, k)
+    return 1.0 - math.comb(n - c, k) / math.comb(n, k)   # comb(n-c, k) = 0 when n-c < k
+
+
+def _check_k(n: int, c: int, k: int) -> None:
+    if not (isinstance(n, int) and isinstance(c, int) and isinstance(k, int)):
+        raise ValueError(f"n, c, k must be ints, got {n!r}, {c!r}, {k!r}")
+    if n < 1 or k < 1 or k > n or c < 0 or c > n:
+        raise ValueError(f"need 1 <= k <= n and 0 <= c <= n, got n={n} c={c} k={k}")
 
 
 def pass_hat_k(n: int, c: int, k: int) -> float:
     """pass^k (tau-bench, Yao et al. 2024): probability that ALL k trials drawn from n pass.
     Unbiased estimator: C(c, k) / C(n, k). Raise ValueError if k > n.
     pass^k <= pass@1 <= pass@k; a reliable agent keeps pass^k close to pass@1."""
-    # TODO M6
-    raise NotImplementedError
+    _check_k(n, c, k)
+    return math.comb(c, k) / math.comb(n, k)              # comb(c, k) = 0 when c < k
