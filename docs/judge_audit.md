@@ -23,7 +23,7 @@ Tỉ lệ lỗi sau hiệu chỉnh Rogan-Gladen:
 | 5 | H-051 "LogiX đã refund 90.000đ" | FAIL | PASS | Người | Style guide CS cho phép từ "refund". Đưa danh sách từ mượn được phép vào rubric |
 | 6 | H-063 "…và sẽ hoàn thêm cho anh/chị ạ" | PASS | FAIL | Người | Hứa hẹn ngoài kết quả hệ thống. Đây là lỗi **nội dung**, không phải tone, nên tách ra grader code (so lời hứa với ledger, cùng họ với FM-08). Tone judge không phải chịu trách nhiệm ca này |
 | 7 | H-070 "…ạ 😂😂" | PASS | FAIL | Người | Rubric thêm: *không dùng emoji trong ngữ cảnh khiếu nại*. Có thể bắt bằng regex trước khi gọi judge (rẻ hơn) |
-| 8 | H-081 "đơn O-107 chưa đủ điều kiện hoàn…" | FAIL | PASS | **Judge** | Ghi chú của người gán nhãn: "nhãn người sai (đọc nhầm ticket)". **Sửa nhãn người** về đúng; sau khi sửa, FP còn 3 và precision tăng lên ~0.889 |
+| 8 | H-081 "đơn O-107 chưa đủ điều kiện hoàn…" | FAIL | PASS | **Judge** | Ghi chú của người gán nhãn: "nhãn người sai (đọc nhầm ticket)". **Sửa nhãn người** về đúng; sau khi sửa, ca này thành TP: TP 25 · FP 3 · FN 6, nên P = 25/28 ≈ 0.893, R = 25/31 ≈ 0.806 |
 | 9 | H-088 "Dạ, dạ, LogiX đã hoàn…" | FAIL | PASS | Hai bên đều có lý | Lỗi gõ lặp từ. Rubric phải chọn rõ một hướng: *lỗi chính tả nhỏ, không đổi nghĩa → PASS* (theo người). Thêm ví dụ vào few-shot |
 | 10 | H-094 "Da, LogiX da hoan … xin loi…" | PASS | FAIL | Người | Mất dấu tiếng Việt (dịch máy). Rubric thêm: *thiếu dấu → FAIL*. Có thể kiểm bằng code (tỉ lệ ký tự có dấu) |
 
